@@ -131,12 +131,17 @@ class PhotosViewController: UIViewController {
         let backViewWidth = self.backView.widthAnchor.constraint(equalTo: self.view.widthAnchor)
         let backViewHeight = self.backView.heightAnchor.constraint(equalTo: self.view.heightAnchor)
         
+        let logoImageTopConstraint = self.logoImageView.topAnchor.constraint(equalTo: self.myView.topAnchor)
+        let logoImageLeftConstraint = self.logoImageView.leadingAnchor.constraint(equalTo: self.myView.leadingAnchor)
+        let logoImageRightConstraint = self.logoImageView.trailingAnchor.constraint(equalTo: self.myView.trailingAnchor)
+        let logoImageBottomConstraint = self.logoImageView.bottomAnchor.constraint(equalTo: self.myView.bottomAnchor)
+        
         let buttonTopConstraint = self.closeBackViewButton.topAnchor.constraint(equalTo: self.backView.topAnchor, constant: 170)
         let buttonRightConstraint = self.closeBackViewButton.trailingAnchor.constraint(equalTo: self.backView.trailingAnchor, constant: -20)
         let buttonWidthConstraint = self.closeBackViewButton.widthAnchor.constraint(equalToConstant: 50)
         let buttonHeightConstraint = self.closeBackViewButton.heightAnchor.constraint(equalToConstant: 50)
         NSLayoutConstraint.activate([
-            self.myViewCenterXConstraint, self.myViewCenterYConstraint, self.myViewWidth, self.myViewHeight, backViewCenterXConstraint, backViewCenterYConstraint, backViewWidth, backViewHeight, buttonTopConstraint, buttonRightConstraint, buttonWidthConstraint, buttonHeightConstraint
+            self.myViewCenterXConstraint, self.myViewCenterYConstraint, self.myViewWidth, self.myViewHeight, backViewCenterXConstraint, backViewCenterYConstraint, backViewWidth, backViewHeight, buttonTopConstraint, buttonRightConstraint, buttonWidthConstraint, buttonHeightConstraint, logoImageTopConstraint, logoImageLeftConstraint, logoImageRightConstraint, logoImageBottomConstraint
         ].compactMap({ $0 }))
     }
     
