@@ -13,9 +13,9 @@ class MyTabBarController: UITabBarController {
         super.viewDidLoad()
         let navTabOne = generatedNavigationController(vc: FeedViewController(), title: "Лента", image: UIImage(systemName: "house"))
         let navTabTwo = generatedNavigationController(vc: LogInViewController(), title: "Профиль", image: UIImage(systemName: "person.circle"))
-        let navTabThree = generatedNavigationController(vc: GesturesViewController(), title: "Жесты", image: UIImage(systemName: "person"))
+//        let navTabThree = generatedNavigationController(vc: GesturesViewController(), title: "Жесты", image: UIImage(systemName: "person"))
         UINavigationBar.appearance().prefersLargeTitles = false
-        self.viewControllers = [navTabOne, navTabTwo, navTabThree]
+        self.viewControllers = [navTabOne, navTabTwo] //, navTabThree]
     }
     
     fileprivate func generatedNavigationController(vc: UIViewController, title: String, image: UIImage?) -> UINavigationController {

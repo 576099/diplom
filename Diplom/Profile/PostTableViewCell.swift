@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol PostTableViewCellProtocol: AnyObject {
+    func upperLikeTap(cell: PostTableViewCell)
+}
+
 class PostTableViewCell: UITableViewCell {
 
     struct ViewModel: ViewModelProtocol {
@@ -17,8 +21,10 @@ class PostTableViewCell: UITableViewCell {
         let views: String
     }
     
-    private lazy var screenWidth = (UIScreen.main.bounds.size.width - 48) / 4
+    weak var delegate: PostTableViewCellProtocol?
+    private var upperLikeLabelGestureRecognizer = UITapGestureRecognizer()
     private let tapGestureRecognizer = UITapGestureRecognizer()
+    private lazy var screenWidth = (UIScreen.main.bounds.size.width - 48) / 4
     
     private lazy var backView: UIView = {
         let view = UIView()
@@ -98,6 +104,7 @@ class PostTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.setupView()
+        self.setupGesture()
     }
     
     required init?(coder: NSCoder) {
@@ -129,7 +136,18 @@ class PostTableViewCell: UITableViewCell {
         let stackViewConstraints = self.stackViewConstraints()
         NSLayoutConstraint.activate(backViewConstraints + stackViewConstraints)
     }
+    
+    func setupGesture() {
+        self.upperLikeLabelGestureRecognizer.addTarget(self, action: #selector(self.upperLikeLabelGesture(_:)))
+        self.likesLabel.isUserInteractionEnabled = true
+        self.likesLabel.addGestureRecognizer(self.upperLikeLabelGestureRecognizer)
+    }
 
+    @objc func upperLikeLabelGesture(_ gestureRecognizer: UITapGestureRecognizer) {
+        guard self.upperLikeLabelGestureRecognizer === gestureRecognizer else { return }
+        delegate?.upperLikeTap(cell: self)
+    }
+    
     private func stackViewConstraints() -> [NSLayoutConstraint] {
         let topConstraint = self.stackView.topAnchor.constraint(equalTo: self.backView.topAnchor, constant: 10)
         let leadingConstraint = self.stackView.leadingAnchor.constraint(equalTo: self.backView.leadingAnchor, constant: 10)

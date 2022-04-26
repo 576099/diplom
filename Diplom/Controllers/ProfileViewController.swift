@@ -10,9 +10,10 @@ import UIKit
 class ProfileViewController: UIViewController {
         
     private lazy var profileHeaderView: ProfileHeaderView = {
-        let view = ProfileHeaderView(frame: .zero)
+//        let view = ProfileHeaderView(frame: .zero)
+        let view = ProfileHeaderView(frame: CGRect(x: CGFloat(0), y: CGFloat(0), width: CGFloat(UIScreen.main.bounds.width), height: CGFloat(220 )))
         view.delegate = self
-        view.isUserInteractionEnabled = true
+//        view.isUserInteractionEnabled = true
         return view
     }()
     
@@ -28,6 +29,7 @@ class ProfileViewController: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "DefaultCell")
         tableView.register(PostTableViewCell.self, forCellReuseIdentifier: "PostCell")
         tableView.register(PhotosTableViewCell.self, forCellReuseIdentifier: "PhotoCell")
+        tableView.register(ProfileHeaderView.self, forHeaderFooterViewReuseIdentifier: "ProfileHeaderView")
         tableView.backgroundColor = .white
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
@@ -126,7 +128,7 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
                 return cell
             }
-            
+            cell.delegate = self
             let post = self.dataSource[indexPath.row]
             let viewModel = PostTableViewCell.ViewModel(author: post.author,
                                                         description: post.description,
@@ -143,14 +145,9 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
     }
     //Устанавливаем прозрачность для HeaderInSection начиная с 1-ой
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if section == 0 {
-            return profileHeaderView
-        }else {
-            let customHeader = UIView()
-            customHeader.backgroundColor = .clear
-            return customHeader
-        }
-
+            let profHV = tableView.dequeueReusableHeaderFooterView(withIdentifier: "ProfileHeaderView") as! ProfileHeaderView
+            profHV.delegate = self
+            return profHV
     }
     
     //обрабатываем касание на ячейку
@@ -161,19 +158,38 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
             self.navigationController?.pushViewController(photoVC, animated: true)
         }
         
-        print(indexPath)
+        let pushDetailVC = DetailPostViewController()
+//        guard let indexPathRow = self.tableView.indexPath(for: cell)?.row else { return }
+        let author = dataSource[indexPath.row].author
+        dataSource[indexPath.row].views += 1
+//        let viewsPost = dataSource[indexPath.row].views
         
+        pushDetailVC.authorLabel.text = author
+        pushDetailVC.descriptionLabel.text = dataSource[indexPath.row].description
+        pushDetailVC.imageView1.image = UIImage(named: dataSource[indexPath.row].image)
+        pushDetailVC.likesLabel.text = "Likes: \(dataSource[indexPath.row].likes)"
+        pushDetailVC.viewsLabel.text = "Views: \(dataSource[indexPath.row].views)"
+        
+        self.navigationController?.pushViewController(pushDetailVC, animated: true)
+        
+        print(author)
+        self.tableView.reloadRows(at: [indexPath], with: .fade)
     }
 
     //Устанавливаем значение высоты Заголовок Секции
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 100
+        if section == 0 {
+            return 220
+        }else {
+            return 0
+        }
     }
     
     //методы для реализации удаления ячеек
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
+    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             tableView.beginUpdates()
@@ -185,7 +201,20 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension ProfileViewController: ProfileViewProtocol {
-    @objc func buttonTappedFromController() {
+    func buttonTappedFromController() {
         print(#function)
+        self.tableView.beginUpdates()
+        self.tableView.endUpdates()
     }
+}
+
+extension ProfileViewController: PostTableViewCellProtocol {
+    func upperLikeTap(cell: PostTableViewCell) {
+        guard let indexPathRow = self.tableView.indexPath(for: cell)?.row else { return }
+        let indexPath = IndexPath(row: indexPathRow, section: 2)
+        dataSource[indexPathRow].likes += 1
+        self.tableView.reloadRows(at: [indexPath], with: .fade)
+        print("\(indexPath)")
+    }
+    
 }

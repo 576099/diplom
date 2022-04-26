@@ -12,7 +12,7 @@ protocol ProfileViewProtocol : NSObjectProtocol{
 }
 
 
-class ProfileHeaderView: UIView {
+class ProfileHeaderView: UITableViewHeaderFooterView {
     
     private var statusText: String = ""
     
@@ -55,7 +55,7 @@ class ProfileHeaderView: UIView {
         button.setTitleColor(.white, for: .normal)
         
         //Target Button for extra task with an asterisk
-        button.addTarget(self, action: #selector(self.buttonPressed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(self.buttonTappedFromController), for: .touchUpInside)
         button.layer.cornerRadius = 10
         button.layer.masksToBounds = false
 
@@ -75,8 +75,8 @@ class ProfileHeaderView: UIView {
         return textField
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(reuseIdentifier: String?) {
+        super.init(reuseIdentifier: reuseIdentifier)
         self.drawSelf()
     }
     
@@ -140,20 +140,28 @@ class ProfileHeaderView: UIView {
 
     }
     
-    @objc private func buttonPressed() {
-//        statusTextChanged(self.textField)
-//        self.statusLabel.text = self.statusText
-        
-        self.delegate?.buttonTappedFromController()
-        
-    }
-    
-    @objc func statusTextChanged(_ textField: UITextField) {
-        guard let statusText = self.textField.text else {
-            return print("Text Field text is empty!")
+    @objc func buttonTappedFromController() {
+        guard textField.text != "" else {
+            textField.moveTextField()
+            print("\(statusLabel.text ?? "nil")")
+            return
         }
-        
-        self.statusText = statusText
-        print(self.statusText)
+        self.statusText = self.textField.text!
+        print("\(statusText)")
+        self.statusLabel.text = statusText
+        self.textField.text = nil
+        self.endEditing(true)
+    }
+}
+
+extension UIView {
+    func moveTextField() {
+        let moveTF = CABasicAnimation(keyPath: "position")
+        moveTF.repeatCount = 3
+        moveTF.duration = 0.07
+        moveTF.autoreverses = true
+        moveTF.fromValue = NSValue(cgPoint: CGPoint(x: self.center.x - 10, y: self.center.y))
+        moveTF.toValue = NSValue(cgPoint: CGPoint(x: self.center.x + 10, y: self.center.y))
+        layer.add(moveTF, forKey: "position")
     }
 }

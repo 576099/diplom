@@ -171,8 +171,9 @@ class LogInViewController: UIViewController {
     
     @objc private func kbdShow(notification: NSNotification) {
         if let kbdSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            self.scrollView.contentInset.bottom = kbdSize.height
-            self.scrollView.verticalScrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: kbdSize.height, right: 0)
+            self.scrollView.contentInset.bottom = kbdSize.height + 100
+            self.scrollView.verticalScrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: kbdSize.height + 100, right: 0)
+//            print(kbdSize.height)
         }
         self.textFieldEmail.layer.borderColor = UIColor.lightGray.cgColor
         self.textFieldPassword.layer.borderColor = UIColor.lightGray.cgColor
@@ -187,7 +188,7 @@ class LogInViewController: UIViewController {
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.scrollView.contentSize = CGSize(width: self.view.frame.width, height: 1000)
+        self.scrollView.contentSize = CGSize(width: self.view.frame.width, height: self.view.frame.height)
     }
     @objc private func buttonTapped() {
         textFieldEmail.resignFirstResponder()
