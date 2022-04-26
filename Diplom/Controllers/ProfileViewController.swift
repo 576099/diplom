@@ -156,24 +156,25 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
             let photoVC = PhotosViewController()
             photoVC.title = "Photo Gallery"
             self.navigationController?.pushViewController(photoVC, animated: true)
+        } else {
+            
+            let pushDetailVC = DetailPostViewController()
+            //        guard let indexPathRow = self.tableView.indexPath(for: cell)?.row else { return }
+            let author = dataSource[indexPath.row].author
+            dataSource[indexPath.row].views += 1
+            //        let viewsPost = dataSource[indexPath.row].views
+            
+            pushDetailVC.authorLabel.text = author
+            pushDetailVC.descriptionLabel.text = dataSource[indexPath.row].description
+            pushDetailVC.imageView1.image = UIImage(named: dataSource[indexPath.row].image)
+            pushDetailVC.likesLabel.text = "Likes: \(dataSource[indexPath.row].likes)"
+            pushDetailVC.viewsLabel.text = "Views: \(dataSource[indexPath.row].views)"
+            
+            self.navigationController?.pushViewController(pushDetailVC, animated: true)
+            
+            print(author)
+            self.tableView.reloadRows(at: [indexPath], with: .fade)
         }
-        
-        let pushDetailVC = DetailPostViewController()
-//        guard let indexPathRow = self.tableView.indexPath(for: cell)?.row else { return }
-        let author = dataSource[indexPath.row].author
-        dataSource[indexPath.row].views += 1
-//        let viewsPost = dataSource[indexPath.row].views
-        
-        pushDetailVC.authorLabel.text = author
-        pushDetailVC.descriptionLabel.text = dataSource[indexPath.row].description
-        pushDetailVC.imageView1.image = UIImage(named: dataSource[indexPath.row].image)
-        pushDetailVC.likesLabel.text = "Likes: \(dataSource[indexPath.row].likes)"
-        pushDetailVC.viewsLabel.text = "Views: \(dataSource[indexPath.row].views)"
-        
-        self.navigationController?.pushViewController(pushDetailVC, animated: true)
-        
-        print(author)
-        self.tableView.reloadRows(at: [indexPath], with: .fade)
     }
 
     //Устанавливаем значение высоты Заголовок Секции
